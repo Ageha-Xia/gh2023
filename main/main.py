@@ -156,8 +156,8 @@ with open('../data/data_test.pkl', 'rb') as f:
 
 x_train = (torch.cat([x_train, y_train, z_train], dim=1), PE_total_train)
 x_test = (torch.cat([x_test, y_test, z_test], dim=1), PE_total_test)
-y_train = torch.from_numpy(Evis_train[:, np.newaxis])
-y_test = torch.from_numpy(Evis_test[:, np.newaxis])
+y_train = torch.from_numpy(Evis_train[:, np.newaxis]).float()
+y_test = torch.from_numpy(Evis_test[:, np.newaxis]).float()
 
 model = DeepONet(branch=[3, 128, 128, 128],
                  trunk_layers=[1, 128, 128, 128])
