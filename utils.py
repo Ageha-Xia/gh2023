@@ -1,6 +1,5 @@
 import torch
 
-
 #loss function with rel/abs Lp loss
 class LpLoss(object):
     def __init__(self, d=2, p=2, size_average=True, reduction=True):
@@ -46,3 +45,17 @@ class LpLoss(object):
 
     def __call__(self, x, y):
         return self.rel(x, y)
+    
+class Normalizer(object):
+    def __init__(self, x):
+        super(Normalizer, self).__init__()
+        if isinstance(x, torch.Tensor) == False:
+            x = torch.from_numpy(x)
+        self.mean = torch.mean(x)
+        self.std = torch.std(x)
+
+    def encode(self, x):
+        return (x - self.mean) / self.std
+
+    def decode(self, x):
+        return x * self.std + self.mean
