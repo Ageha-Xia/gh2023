@@ -12,7 +12,9 @@ event_count = np.zeros(dataset_count, dtype=int)
 
 # 分数据集读取
 for data_id in range(dataset_count):
-    with h5py.File(f'{dataset_prefix}{519+data_id}.h5', 'r') as data_file: # python语法f string
+    # with h5py.File(f'{dataset_prefix}{519+data_id}.h5', 'r') as data_file: # python语法f string
+        # event_count[data_id] = data_file['ParticleTruth'].shape[0]
+    with h5py.File(f'{dataset_prefix}problem.h5', 'r') as data_file: # python语法f string
         event_count[data_id] = data_file['ParticleTruth'].shape[0]
 
 event_total = event_count.sum() #训练集一共有190000个事件
@@ -31,9 +33,10 @@ z_train = np.zeros(event_total)
 event_index = np.insert(np.cumsum(event_count), 0, 0)
 
 for data_id in tqdm(range(dataset_count)): # tqdm把iterator包起来，就可以实现进度条
-    with h5py.File(f'{dataset_prefix}{519+data_id}.h5', 'r') as data_file:
-        Ek_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['Ek'][...]
-        Evis_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['Evis'][...]
+    # with h5py.File(f'{dataset_prefix}{519+data_id}.h5', 'r') as data_file:
+    with h5py.File(f'{dataset_prefix}problem.h5', 'r') as data_file:
+        # Ek_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['Ek'][...]
+        # Evis_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['Evis'][...]
         x_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['x'][...]
         y_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['y'][...]
         z_train[event_index[data_id]:event_index[data_id+1]] = data_file['ParticleTruth']['z'][...]
@@ -44,5 +47,6 @@ for data_id in tqdm(range(dataset_count)): # tqdm把iterator包起来，就可�
         PE_total_train[event_index[data_id]:event_index[data_id+1]] = PE_total
         
 data =  (x_train, y_train, z_train, PE_total_train, Ek_train, Evis_train)
-with open('../data/data_test.pkl', 'wb') as file:
+# with open('../data/data_test.pkl', 'wb') as file:
+with open('../data/problem.pkl', 'wb') as file:
     pickle.dump(data, file)
