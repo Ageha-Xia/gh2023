@@ -7,15 +7,16 @@ from deeponet import DeepONet
 
 device = 'cuda:6' if torch.cuda.is_available() else (torch.device('mps') if torch.backends.mps.is_available() else 'cpu')
 
-def train(x_train, y_train, x_test, y_test):
+def train(x_train, y_train, x_test, y_test, it=50):
     model = DeepONet(branch=[3, 128, 128, 128, 128],
                     trunk_layers=[1, 128, 128, 128])
     # model = DeepONet(branch=Simple1DCNN(),
     #                  trunk_layers=[1, 128, 128, 128])
 
-    model.run(x_train, y_train, x_test, y_test, batch_size=500, device=device, criterion='l2')
+    model.run(x_train, y_train, x_test, y_test, batch_size=500, device=device, criterion='l2', iterations=it)
     model.predict(x_test, device=device)
     model.save('../model/')
+    return model
 
 def simulate(model, x_normalizer, y_normalizer, z_normalizer, PE_normalizer):
     if isinstance(model, str):
@@ -72,5 +73,5 @@ if __name__ == '__main__':
     y_train = torch.from_numpy(Evis_train[:, np.newaxis]).float()
     y_test = torch.from_numpy(Evis_test[:, np.newaxis]).float()
     
-    # train(x_train, y_train, x_test, y_test)
-    simulate('../model/2023-11-03_17-33-39.pth', x_normalizer, y_normalizer, z_normalizer, PE_normalizer)
+    model = train(x_train, y_train, x_test, y_test, 50)
+    # simulate(model, x_normalizer, y_normalizer, z_normalizer, PE_normalizer)
