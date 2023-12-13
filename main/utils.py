@@ -59,3 +59,7 @@ class Normalizer(object):
 
     def decode(self, x):
         return x * self.std + self.mean
+    
+def myloss(output, target):
+    loss = torch.sqrt(torch.mean((output - target) ** 2 / target))
+    return loss
